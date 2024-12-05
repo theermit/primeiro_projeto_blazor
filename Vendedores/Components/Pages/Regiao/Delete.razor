@@ -1,0 +1,40 @@
+@page "/regiao/delete/{Id:int}"
+
+@rendermode InteractiveServer
+
+@inject ApplicationDbContext Context
+
+@inject NavigationManager Navigation
+
+<h1>Apagar</h1>
+
+<EditForm Model="@Regiao" OnSubmit="ApagarRegiaoAsync">
+    <div class="mb-3">
+        <label class="form-label" for="regiao">Região</label>
+        <InputText id="regiao" class="form-control" @bind-Value="Regiao.Nome" readonly/>
+    </div>
+    <a href="/regiao" class="btn btn-primary">voltar</a>
+    &nbsp;
+    <button type="submit" class="btn btn-danger">Apagar</button>
+</EditForm>
+
+@code
+{
+    [Parameter]
+    public int Id{get;set;}
+
+    public Regiao Regiao{get;set;}
+
+    protected override async Task OnInitializedAsync()
+    {
+        Regiao = await Context.Regioes.AsNoTracking()
+            .FirstOrDefaultAsync<Regiao>(x => x.Id == Id);
+    }
+
+    public async Task ApagarRegiaoAsync()
+    {
+        Context.Remove<Regiao>(Regiao);
+        await Context.SaveChangesAsync();
+        Navigation.NavigateTo("regiao");
+    }
+}

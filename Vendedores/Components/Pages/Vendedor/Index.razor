@@ -1,0 +1,57 @@
+@page "/vendedor"
+
+@inject ApplicationDbContext Context
+
+<h1>Vendedores</h1>
+
+<p><a href="/vendedor/Create" class="btn btn-primary">Criar</a></p>
+    @if(!Vendedores.Any())
+    {
+        <p>Não há Vendedores cadastrados.</p>
+    }
+    else 
+    {
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nome</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var Vendedor in Vendedores)
+                {
+                    <tr>
+                        <td>@Vendedor.Id</td>
+                        <td>@Vendedor.Nome</td>
+                        <td>
+                            <a href="/vendedor/@Vendedor.Id" class="btn btn-primary">Detalhes</a>
+                            &nbsp;
+                            <a href="/vendedor/edit/@Vendedor.Id" class="btn btn-warning">Editar</a>
+                            &nbsp;
+                            <a href="/vendedor/delete/@Vendedor.Id" class="btn btn-danger">Excluir</a>
+                        </td>
+                    </tr>
+                }
+            
+            </tbody>
+        </table>
+    }
+    
+
+@code {
+    public IEnumerable<VendedorDTO> Vendedores {get;set;} = Enumerable.Empty<VendedorDTO>();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        var ConsultaVendedores = from Vendedor in Context.Vendedores
+                        select new VendedorDTO()
+                        {
+                            Id = Vendedor.Id,
+                            Nome = Vendedor.Nome
+                        };
+        
+        Vendedores = await ConsultaVendedores.ToListAsync();
+    }
+}

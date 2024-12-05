@@ -1,0 +1,37 @@
+@page "/regiao/create"
+
+
+
+@rendermode InteractiveServer
+
+@inject ApplicationDbContext Context
+@inject NavigationManager Navigation
+<h1>Nova Região</h1>
+
+<EditForm Model="@Model" OnValidSubmit="CriarRegiaoAsync">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="mb-3">
+        <label class="form-label" for="regiao">Região</label>
+        <InputText id="regiao" class="form-control" @bind-Value="Model.Nome"/>
+        <ValidationMessage For="@(() => Model.Nome)" />
+    </div>
+    <a href="/regiao" class="btn btn-primary">voltar</a>
+    <button type="submit" class="btn btn-success">Criar</button>
+
+</EditForm>
+
+@code {
+    public Regiao Model {get; set;} = new Regiao();
+
+    @* protected override void OnInitialized()
+    {
+    } *@
+
+    private async Task CriarRegiaoAsync()
+    {
+        await Context.Regioes.AddAsync(Model);
+        await Context.SaveChangesAsync();
+        Navigation.NavigateTo("Regiao");
+    }
+}    

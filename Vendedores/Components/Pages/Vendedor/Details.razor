@@ -1,0 +1,41 @@
+@page "/vendedor/{Id:int}"
+
+@rendermode InteractiveServer
+
+@inject ApplicationDbContext Context
+
+@inject NavigationManager Navigation
+
+<h1>Detalhes</h1>
+
+<EditForm Model="@Model">
+    <div class="mb-3">
+        <label class="form-label" for="nome">Nome</label>
+        <InputText id="nome" class="form-control" @bind-Value="Model.Nome" readonly/>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="email">E-mail</label>
+        <InputText id="email" class="form-control" @bind-Value="Model.Email" readonly/>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="regiao">Região</label>
+        <InputText id="regiao" class="form-control" @bind-Value="Model.Regiao.Nome" readonly/>
+    </div>
+    <a href="/vendedor" class="btn btn-primary">voltar</a>
+
+</EditForm>
+
+@code
+{
+    [Parameter]
+    public int Id{get;set;}
+
+    public Vendedor Model{get;set;} = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Model = await Context.Vendedores
+            .Include(v => v.Regiao)
+            .FirstOrDefaultAsync<Vendedor>(x => x.Id == Id);
+    }
+}

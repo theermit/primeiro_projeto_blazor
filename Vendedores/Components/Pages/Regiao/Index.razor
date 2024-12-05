@@ -1,0 +1,50 @@
+@page "/regiao"
+
+@inject ApplicationDbContext Context
+
+<h1>Regiões</h1>
+
+<p><a href="/regiao/Create" class="btn btn-primary">Criar</a></p>
+    @if(!Regioes.Any())
+    {
+        <p>Não há Regiões cadastradas.</p>
+    }
+    else 
+    {
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nome</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var Regiao in Regioes)
+                {
+                    <tr>
+                        <td>@Regiao.Id</td>
+                        <td>@Regiao.Nome</td>
+                        <td>
+                            <a href="/regiao/@Regiao.Id" class="btn btn-primary">Detalhes</a>
+                            &nbsp;
+                            <a href="/regiao/edit/@Regiao.Id" class="btn btn-warning">Editar</a>
+                            &nbsp;
+                            <a href="/regiao/delete/@Regiao.Id" class="btn btn-danger">Excluir</a>
+                        </td>
+                    </tr>
+                }
+            
+            </tbody>
+        </table>
+    }
+    
+
+@code {
+    public IEnumerable<Regiao> Regioes {get;set;} = Enumerable.Empty<Regiao>();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        Regioes = await Context.Regioes.AsNoTracking().ToListAsync();
+    }
+}

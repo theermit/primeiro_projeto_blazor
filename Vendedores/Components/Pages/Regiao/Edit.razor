@@ -1,0 +1,43 @@
+@page "/regiao/edit/{Id:int}"
+
+@rendermode InteractiveServer
+
+@inject ApplicationDbContext Context
+
+@inject NavigationManager Navigation
+
+<h1>Editar Região</h1>
+
+<EditForm Model="@Regiao" OnValidSubmit="EditarRegiaoAsync">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="mb-3">
+        <label class="form-label" for="regiao">Região</label>
+        <InputText id="regiao" class="form-control" @bind-Value="Regiao.Nome"/>
+        <ValidationMessage For="@(() => Regiao.Nome)" />
+    </div>
+    <a href="/regiao" class="btn btn-primary">voltar</a>
+    <button type="submit" class="btn btn-success">Editar</button>
+
+</EditForm>
+
+@code
+{
+    [Parameter]
+    public int Id{get;set;}
+
+    public Regiao Regiao{get;set;}
+
+    protected override async Task OnInitializedAsync()
+    {
+        Regiao = await Context.Regioes.AsNoTracking()
+            .FirstOrDefaultAsync<Regiao>(x => x.Id == Id);
+    }
+
+    public async Task EditarRegiaoAsync()
+    {
+        Context.Regioes.Update(Regiao);
+        await Context.SaveChangesAsync();
+        Navigation.NavigateTo("regiao");
+    }
+}
